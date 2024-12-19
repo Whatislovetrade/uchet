@@ -11,8 +11,6 @@ const EmployeesList = ({data}) => {
         )
     })
 
-    console.log(elements)
-
     return (
         <ul className="app-list list-group">
             {elements}
