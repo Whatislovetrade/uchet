@@ -62,20 +62,29 @@ export default class App extends Component {
         }
     }
 
-    onToggleIncrease = (id) => {
-        console.log(`Increase this ${id}`)
+    onToggleProp = (id, prop) => {
+        this.setState(({ data }) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, [prop]: !item[prop]}
+                }
+                return item
+            })
+        }))
     }
 
-    onToggleStar = (id) => {
-        console.log(`Star this ${id}`)
-    }
+
+
+ 
 
     render() {
         const { data, name, salary } = this.state
+        const employees = this.state.data.length
+        const increased = this.state.data.filter(item => item.increase).length
         return (
                 
             <div className="app">
-                <AppInfo />
+                <AppInfo employees={employees} increased={increased} />
     
                 <div className="search-panel">
                     <SearchPanel />
@@ -85,8 +94,7 @@ export default class App extends Component {
                 <EmployeesList
                     data={ data }
                     onDelete={this.deleteItem}
-                    onToggleIncrease={this.onToggleIncrease}
-                    onToggleStar={this.onToggleStar}
+                    onToggleProp={this.onToggleProp}
                 />
                 <EmployeesAddForm
                     name={name}
