@@ -5,19 +5,33 @@ import SearchPanel from '../search-panel/search-panel'
 import AppFilter from '../app-filter/app-filter'
 import EmployeesList from '../employees-list/employees-list'
 import EmployeesAddForm from '../employees-add-form/employees-add-form'
+import nextId from "react-id-generator";
 
 import './app.css'
 
 export default class App extends Component {
 
+    nextId = nextId()
+
     state = {
         data: [
-            {name: 'Alex' , salary: 800, increase: true, id:1},
-            {name: 'Max' , salary: 3300, increase: false, id:2},
-            {name: 'Ivan' , salary: 1000, increase: false, id:3 }
-        ]
+            this.addNewItem('Alex', 800),
+            this.addNewItem('Max', 3300),
+            this.addNewItem('Ivan', 1000),
+        ],
+        name: '',
+        salary: ''
     }
-       
+
+    addNewItem(name, salary) {
+        return {
+            name,
+            salary,
+            increase: false,
+            star: false,
+            id: nextId(1)
+        }
+    }       
 
     deleteItem = (id) => {
         this.setState(({ data }) => {
@@ -27,8 +41,39 @@ export default class App extends Component {
         })
     }
 
+    onValueChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value,
+        })
+    }
+
+    addItem = (e) => {
+        e.preventDefault()
+
+        const { name, salary, data } = this.state
+
+        if (name && salary) {
+            const newEmployee = this.addNewItem(name, parseInt(salary))
+            this.setState({
+                data: [...data, newEmployee],
+                name: '', 
+                salary: '',
+            })
+        }
+    }
+
+    onToggleIncrease = (id) => {
+        console.log(`Increase this ${id}`)
+    }
+
+    onToggleStar = (id) => {
+        console.log(`Star this ${id}`)
+    }
+
     render() {
+        const { data, name, salary } = this.state
         return (
+                
             <div className="app">
                 <AppInfo />
     
@@ -38,10 +83,16 @@ export default class App extends Component {
                 </div>
     
                 <EmployeesList
-                    data={this.state.data}
+                    data={ data }
                     onDelete={this.deleteItem}
+                    onToggleIncrease={this.onToggleIncrease}
+                    onToggleStar={this.onToggleStar}
                 />
-                <EmployeesAddForm />
+                <EmployeesAddForm
+                    name={name}
+                    salary={salary}
+                    onValueChange={this.onValueChange}
+                    onAdd={this.addItem} />
             </div>
         )
     }
